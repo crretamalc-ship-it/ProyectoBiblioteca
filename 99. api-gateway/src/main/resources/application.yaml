@@ -1,0 +1,80 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+      routes:
+        - id: auth-service-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+
+        - id: user-service-route
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+
+        - id: security-service-route
+          uri: lb://security-service
+          predicates:
+            - Path=/api/security/**
+
+        - id: ms-inventario
+          uri: lb://ms-inventario
+          predicates:
+            - Path=/inventario/**
+
+        - id: ms-prestamos
+          uri: lb://ms-prestamos
+          predicates:
+            - Path=/prestamos/**
+
+        - id: ms-multas
+          uri: lb://ms-multas
+          predicates:
+            - Path=/multas/**
+
+        - id: ms-favoritos-listas
+          uri: lb://ms-favoritos-listas
+          predicates:
+            - Path=/api/listas/**
+
+        - id: ms-notificaciones
+          uri: lb://ms-notificaciones
+          predicates:
+            - Path=/api/notificaciones/**
+
+        - id: ms-sugerencias
+          uri: lb://ms-sugerencias
+          predicates:
+            - Path=/api/sugerencias/**
+
+        - id: ms-valoraciones
+          uri: lb://ms-valoraciones
+          predicates:
+            - Path=/api/valoraciones/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
