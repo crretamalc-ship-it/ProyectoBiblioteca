@@ -4,6 +4,9 @@ Proyecto semestral DSY1103 (Desarrollo FullStack 1). Sistema distribuido para la
 gestion completa de una biblioteca: usuarios, roles, prestamos, inventario,
 multas, listas personales, notificaciones, sugerencias y valoraciones.
 
+## Link Video
+[Link video](https://www.youtube.com/watch?v=553wKZcdLow)
+
 ## Integrantes del equipo
 
 | Nombre | Aporte |
