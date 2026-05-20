@@ -10,7 +10,7 @@ multas, listas personales, notificaciones, sugerencias y valoraciones.
 |---|---|
 | Diego Patricio Soto León | Auth - User - Security - Inventario - Prestamos - Multas |
 | Nabih Aballay | Sugerencias - Favoritos |
-| Cristobal Retamal Carrera| Notificaciones - Valoraciones |
+| Cristopher Retamal Carrera| Notificaciones - Valoraciones |
 
 
 ## Microservicios
@@ -75,21 +75,6 @@ microservicios + el gateway deben aparecer en `Instances currently registered`.
 
 Para la creación de las bases de datos, se adjuntan 2 SQL en el proyecto, en los cuales hay que ejecutarlos en orden en el perfil de phpadmin de la instancia de XAMPP
 
-
-## Endpoints principales (via API Gateway en `http://localhost:8080`)
-
-| Recurso | Endpoint base | Ejemplo |
-|---|---|---|
-| Auth | `/api/auth/login` | `POST /api/auth/login` (body JSON con email/password) |
-| Usuarios | `/api/users` | `GET /api/users/email/{email}` |
-| Roles | `/api/security/roles`, `/api/security/asignar` | `POST /api/security/asignar` |
-| Inventario | `/inventario` | `POST /inventario/crear` |
-| Prestamos | `/prestamos` | `POST /prestamos/registrar` |
-| Multas | `/multas` | `POST /multas/calcular/{prestamoId}` |
-| Listas | `/api/listas` | `POST /api/listas` |
-| Notificaciones | `/api/notificaciones` | `POST /api/notificaciones/vencimiento/{id}` |
-| Sugerencias | `/api/sugerencias` | `POST /api/sugerencias` |
-| Valoraciones | `/api/valoraciones` | `GET /api/valoraciones/libro/{id}/promedio` |
 
 ## Licencia
 
