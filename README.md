@@ -79,6 +79,38 @@ microservicios + el gateway deben aparecer en `Instances currently registered`.
 Para la creación de las bases de datos, se adjuntan 2 SQL en el proyecto, en los cuales hay que ejecutarlos en orden en el perfil de phpadmin de la instancia de XAMPP
 
 
+# 15. Flujo funcional principal
+
+Ejemplo de registro de un libro en el inventario utilizando el API Gateway:
+
+```http
+POST http://localhost:8080/inventario/crear
+```
+
+```json
+{
+  "titulo": "Cien anios de soledad",
+  "autor": "Gabriel Garcia Marquez",
+  "isbn": "9780307474728",
+  "editorial": "Sudamericana",
+  "stock": 5
+}
+```
+
+Luego se puede consultar el catalogo de libros con:
+
+```http
+GET http://localhost:8080/inventario/listar
+```
+
+Tambien se puede buscar un libro especifico por ID:
+
+```http
+GET http://localhost:8080/inventario/ver/1
+```
+
+Este flujo utiliza el microservicio `ms-inventario`, que administra el catalogo de libros y valida datos como titulo, autor, ISBN, editorial y stock disponible.
+
 ## Licencia
 
 Proyecto academico - Duoc UC - DSY1103 - 2026
