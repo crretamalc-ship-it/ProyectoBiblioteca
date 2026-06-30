@@ -9,6 +9,7 @@ public interface NotificacionService {
     NotificacionResponseDTO notificarVencimiento(Long prestamoId);
     List<NotificacionResponseDTO> listarNotificaciones();
     List<NotificacionResponseDTO> listarPorUsuario(String email);
+    List<NotificacionResponseDTO> listarPorTipo(String tipo);
     NotificacionResponseDTO buscarPorId(Long id);
     NotificacionResponseDTO marcarEnviada(Long id);
     void eliminarNotificacion(Long id);

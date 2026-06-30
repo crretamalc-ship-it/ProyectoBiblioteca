@@ -3,6 +3,11 @@ package com.biblioteca.ms_multas.controller;
 import com.biblioteca.ms_multas.dto.MultaAjusteDTO;
 import com.biblioteca.ms_multas.model.Multa;
 import com.biblioteca.ms_multas.service.MultaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Multas", description = "Operaciones para calcular, pagar, ajustar, anular y consultar multas")
+@ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Operacion exitosa"),
+        @ApiResponse(responseCode = "201", description = "Recurso creado"),
+        @ApiResponse(responseCode = "400", description = "Solicitud invalida"),
+        @ApiResponse(responseCode = "404", description = "Recurso no encontrado"),
+        @ApiResponse(responseCode = "503", description = "Servicio dependiente no disponible")
+})
 @RestController
 @RequestMapping("/multas")
 public class MultaController {
@@ -29,8 +42,9 @@ public class MultaController {
     @Autowired
     private MultaService service;
 
+    @Operation(summary = "Calcular multa", description = "Calcula y registra una multa para un prestamo vencido")
     @PostMapping("/calcular/{prestamoId}")
-    public ResponseEntity<Object> calcular(@PathVariable Long prestamoId) {
+    public ResponseEntity<Object> calcular(@Parameter(description = "ID del prestamo", required = true) @PathVariable Long prestamoId) {
         log.info("POST /multas/calcular/{}", prestamoId);
         try {
             Multa multa = service.calcularMulta(prestamoId);
@@ -42,8 +56,9 @@ public class MultaController {
         }
     }
 
+    @Operation(summary = "Pagar multa", description = "Marca una multa pendiente como pagada")
     @PostMapping("/pagar/{multaId}")
-    public ResponseEntity<Object> pagar(@PathVariable Long multaId) {
+    public ResponseEntity<Object> pagar(@Parameter(description = "ID de la multa", required = true) @PathVariable Long multaId) {
         log.info("POST /multas/pagar/{}", multaId);
         try {
             Multa multa = service.pagarMulta(multaId);
@@ -55,8 +70,10 @@ public class MultaController {
 
     // Ajuste administrativo de una multa pendiente (PUT).
      
+    @Operation(summary = "Ajustar multa", description = "Actualiza dias de retraso o monto de una multa pendiente")
     @PutMapping("/ajustar/{multaId}")
-    public ResponseEntity<Object> ajustar(@PathVariable Long multaId,
+    public ResponseEntity<Object> ajustar(@Parameter(description = "ID de la multa", required = true) @PathVariable Long multaId,
+                                          @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos para ajustar dias de retraso o monto de la multa", required = true)
                                           @Valid @RequestBody MultaAjusteDTO dto) {
         log.info("PUT /multas/ajustar/{}", multaId);
         try {
@@ -68,8 +85,9 @@ public class MultaController {
     }
 
     // Anula la multa (soft delete) usando PUT, conserva trazabilidad.
+    @Operation(summary = "Anular multa", description = "Anula una multa conservando trazabilidad")
     @PutMapping("/anular/{multaId}")
-    public ResponseEntity<Object> anular(@PathVariable Long multaId) {
+    public ResponseEntity<Object> anular(@Parameter(description = "ID de la multa", required = true) @PathVariable Long multaId) {
         log.info("PUT /multas/anular/{}", multaId);
         try {
             return ResponseEntity.ok(service.anularMulta(multaId));
@@ -80,8 +98,9 @@ public class MultaController {
 
     // Eliminacion fisica (DELETE real). Usar con cuidado.
      
+    @Operation(summary = "Eliminar multa", description = "Elimina fisicamente una multa")
     @DeleteMapping("/{multaId}")
-    public ResponseEntity<Object> eliminar(@PathVariable Long multaId) {
+    public ResponseEntity<Object> eliminar(@Parameter(description = "ID de la multa", required = true) @PathVariable Long multaId) {
         log.warn("DELETE /multas/{}", multaId);
         try {
             service.eliminarMulta(multaId);
@@ -91,8 +110,9 @@ public class MultaController {
         }
     }
 
+    @Operation(summary = "Listar multas por usuario", description = "Lista multas asociadas al correo de un usuario")
     @GetMapping("/usuario/{email}")
-    public ResponseEntity<Object> listarPorUsuario(@PathVariable String email) {
+    public ResponseEntity<Object> listarPorUsuario(@Parameter(description = "Correo del usuario", required = true) @PathVariable String email) {
         List<Multa> multas = service.listarPorUsuario(email);
         if (multas.isEmpty()) {
             return ResponseEntity.status(404).body("El usuario no tiene multas registradas");
@@ -100,8 +120,19 @@ public class MultaController {
         return ResponseEntity.ok(multas);
     }
 
+    @Operation(summary = "Consultar multas pendientes", description = "Indica si un usuario tiene multas pendientes y cuantas son")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Resumen de multas pendientes",
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    mediaType = "application/json",
+                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                            value = "{\"email\":\"ana.perez@biblioteca.cl\",\"tienePendientes\":true,\"cantidad\":2}"
+                    )
+            )
+    )
     @GetMapping("/pendientes/{email}")
-    public ResponseEntity<Map<String, Object>> tienePendientes(@PathVariable String email) {
+    public ResponseEntity<Map<String, Object>> tienePendientes(@Parameter(description = "Correo del usuario", required = true) @PathVariable String email) {
         boolean pendientes = service.tienePendientes(email);
         long cantidad = service.listarPendientesPorUsuario(email).size();
         return ResponseEntity.ok(Map.of(
@@ -111,8 +142,9 @@ public class MultaController {
         ));
     }
 
+    @Operation(summary = "Buscar multa por ID", description = "Obtiene una multa usando su identificador")
     @GetMapping("/ver/{id}")
-    public ResponseEntity<Object> verUna(@PathVariable Long id) {
+    public ResponseEntity<Object> verUna(@Parameter(description = "ID de la multa", required = true) @PathVariable Long id) {
         Multa multa = service.buscarPorId(id);
         if (multa == null) {
             return ResponseEntity.status(404).body("Multa no encontrada");
@@ -120,6 +152,7 @@ public class MultaController {
         return ResponseEntity.ok(multa);
     }
 
+    @Operation(summary = "Listar multas", description = "Lista todas las multas registradas")
     @GetMapping("/listar")
     public ResponseEntity<Object> listarTodas() {
         List<Multa> multas = service.listarTodas();

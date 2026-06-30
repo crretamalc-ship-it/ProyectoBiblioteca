@@ -1,4 +1,4 @@
-package com.bilbioteca.security_service;
+package com.biblioteca.security_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

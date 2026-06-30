@@ -100,6 +100,11 @@ public class NotificacionServiceImpl implements NotificacionService {
     }
 
     @Override
+    public List<NotificacionResponseDTO> listarPorTipo(String tipo) {
+        return repository.findByTipo(tipo).stream().map(this::mapToResponse).toList();
+    }
+
+    @Override
     public NotificacionResponseDTO buscarPorId(Long id) {
         Notificacion n = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Notificacion no encontrada"));
